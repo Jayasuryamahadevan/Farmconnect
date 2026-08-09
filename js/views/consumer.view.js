@@ -504,7 +504,7 @@ const ConsumerView = {
     this.showRequestForm(val, 'piece', '', '');
   },
 
-(farmers, consumerLoc) {
+  _renderNearbyFarmers(farmers, consumerLoc) {
     if (farmers.length === 0) {
       return `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🌾</div><div class="empty-state-title">No farmers in range</div></div>`;
     }

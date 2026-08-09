@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  farmconnect:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farmconnect_app
+    ports:
+      - "8080:80"
+    restart: unless-stopped
