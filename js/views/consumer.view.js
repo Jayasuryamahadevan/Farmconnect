@@ -152,7 +152,7 @@ const ConsumerView = {
              style="animation-delay:${i * 0.05}s; cursor:pointer;">
           <span class="product-distance-badge">${Geo.formatDistance(p.distance)}</span>
           ${p.agentGenerated ? '<span class="agent-badge">🤖 Agent listed</span>' : ''}
-          ${p.farmerPushed && !p.agentGenerated ? '<span class="agent-badge" style="background:#FDE9FF;color:#7C3AED;">🚀 Farmer pushed</span>' : ''}
+          ${p.source === 'thulir' ? '<span class="agent-badge" style="background:#E0F2FE;color:#0369A1;">🌐 Thulir network</span>' : p.farmerPushed && !p.agentGenerated ? '<span class="agent-badge" style="background:#FDE9FF;color:#7C3AED;">🚀 Farmer pushed</span>' : ''}
           <span class="product-emoji">${p.emoji || '🌿'}</span>
           <div class="product-name">${p.name}</div>
           <div class="product-farmer">${p.farmerName}</div>
@@ -293,7 +293,7 @@ const ConsumerView = {
           <div class="sheet-product-name">${p.name}</div>
           <div class="sheet-farmer">🌾 ${p.farmerName} · ${Geo.formatDistance(distance)} away</div>
           ${p.agentGenerated ? '<span class="agent-badge" style="margin:6px 0;display:inline-block;">🤖 Agent listed</span>' : ''}
-          ${p.farmerPushed && !p.agentGenerated ? '<span class="agent-badge" style="background:#FDE9FF;color:#7C3AED;margin:6px 0;display:inline-block;">🚀 Farmer pushed</span>' : ''}
+          ${p.source === 'thulir' ? '<span class="agent-badge" style="background:#E0F2FE;color:#0369A1;margin:6px 0;display:inline-block;">🌐 Thulir network</span>' : p.farmerPushed && !p.agentGenerated ? '<span class="agent-badge" style="background:#FDE9FF;color:#7C3AED;margin:6px 0;display:inline-block;">🚀 Farmer pushed</span>' : ''}
         </div>
         <button class="sheet-close" onclick="ConsumerView._closeSheet()">✕</button>
       </div>
@@ -469,6 +469,7 @@ const ConsumerView = {
         // Agent dispatch — notify all agents
         Agent.dispatchRequest(order);
         NotificationSystem.notifyMatchedFarmers(order, broadcastResult.all);
+        if (typeof Bridge !== 'undefined') Bridge.syncOrder(order);
         orderIds.push(order.id);
       }
 
@@ -1025,6 +1026,7 @@ const ConsumerView = {
       // Notify ALL farmers in the broadcast
       NotificationSystem.notifyMatchedFarmers(order, broadcastResult.all);
       NotificationSystem.updateBadge();
+      if (typeof Bridge !== 'undefined') Bridge.syncOrder(order);
 
       // Show contextual toast based on agent responses
       if (autoListed.length > 0) {
